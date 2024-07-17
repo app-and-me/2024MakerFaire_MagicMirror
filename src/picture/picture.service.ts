@@ -16,7 +16,7 @@ function fileToGenerativePart(path: fs.PathOrFileDescriptor, mimeType: string) {
 export class PictureService {
   async generateCharacterName(): Promise<string> {
     try {
-      const prompt = `이 사진속 인물과 똑같이 생긴 동화속 인물\n
+      const prompt = `이 사진속 인물과 비슷하게 생긴 동화속 인물\n
                       list(백설공주
                       신데렐라
                       잠자는 숲속의 공주
