@@ -1,56 +1,37 @@
-body {
-  margin: 0;
-  overflow: hidden;
-}
-
-/* 시작 페이지 */
-.page {
+#camera-container {
   position: absolute;
+  top: 0;
+  left: 0;
   width: 100%;
   height: 100%;
-  background-size: cover;
-  background-position: center;
   display: flex;
-  align-items: center;
   justify-content: center;
+  align-items: center;
+  background-color: rgba(0, 0, 0, 0.5); /* 배경 어둡게 처리 */
 }
 
-/* 설명 페이지 */
-
-#start-page {
-  background-image: url('/image/startpage_de.jpg');
-}
-
-#explanation-page {
-  background-image: url('../image/account.png');
-}
-
-.arrow {
-  position: fixed;
-  font-size: 8em;
-  color: #3F0096;
-  cursor: pointer;
-  top: 50vh;
-  left: 50vw;
-  transform: translate(-111%, 229%);
-  opacity: 1;
-}
-
-/* 카메라 페이지 */
-
-#camera-container {
+#camera-frame {
   position: relative;
-  width: 100%;
-  max-width: 640px;
-  margin: 0 auto;
-  text-align: center;
+  width: 80%;
+  height: 80%;
+  max-width: 800px;
+  max-height: 600px;
+  background-color: white;
+  border-radius: 10px;
+  box-shadow: 0 0 20px rgba(0, 0, 0, 0.3);
+  overflow: hidden;
+  border: 10px solid yellow;
 }
+
 #camera {
   width: 100%;
+  height: 100%;
   max-width: 100%;
-  height: auto;
-  border: 1px solid black;
+  max-height: 100%;
+  object-fit: contain;
+  padding: 20px;
 }
+
 #countdown {
   position: absolute;
   top: 50%;
@@ -63,79 +44,17 @@ body {
   border-radius: 10px;
   display: none;
 }
+
 #snapshot-container {
+  position: absolute;
+  bottom: 20px;
+  left: 50%;
+  transform: translateX(-50%);
   display: flex;
   flex-wrap: wrap;
   gap: 10px;
   justify-content: center;
-  margin-top: 20px;
-}
-.snapshot {
-  position: relative;
-  border: 1px solid black;
-  flex: 0 0 calc(33.33% - 20px); /* Adjust as needed */
-  max-width: calc(33.33% - 20px); /* Adjust as needed */
-  box-sizing: border-box;
-}
-.snapshot img {
   width: 100%;
-  display: block;
-}
-.save-button {
-  display: block;
-  margin: 5px auto;
-  padding: 5px 10px;
-  font-size: 12px;
-  cursor: pointer;
-  background-color: white;
-  border: 1px solid black;
-  text-align: center;
+  max-width: 800px; /* 카메라 프레임의 최대 크기와 동일하게 설정 */
 }
 
-/* 로딩 페이지 */
-
-.box {
-  background-color: #ffffff;
-  display: flex;
-  flex-direction: row;
-  justify-content: center;
-  width: 100%;
-}
-.box .rectangle {
-  position: absolute;
-  width: 1288px;
-  height: 685px;
-  top: 283px;
-  left: 316px;
-  background-color: #c6c6c6;
-}
-.container { text-align: center; } 
-.container img { width: 100%; height: 100%; } 
-.container .overlay {
-  position: fixed;
-  top: 70%;
-  left: 50%;
-  transform: translate(-50%, -80%);
-  width: 30%;
-  height: 50%;
-}
-.image_text {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%,-400%);
-  color: white;
-}
-
-/* 결과 페이지 */
-
-.back { text-align: center; }
-.back img { width: 100%; height: 100%;}
-.person {
-    position: fixed;
-    transform: translate(-50%,-50%);
-}
-.person img {
-    margin-left: 190%;
-    margin-bottom: 210%;
-}
