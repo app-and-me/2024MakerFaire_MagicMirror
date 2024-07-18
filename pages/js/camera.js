@@ -4,10 +4,11 @@ const countdown = document.getElementById('countdown');
 
 // 웹캠 스트림 가져오기
 navigator.mediaDevices
-  .getUserMedia({ video: true })
+  .getUserMedia({ video: { facingMode: 'user' } }) // 거울 모드로 변경
   .then((stream) => {
     video.srcObject = stream;
     video.play();
+    video.style.transform = 'scaleX(-1)'; // 거울 모드로 변경
     startCountdown();
   })
   .catch((err) => {
@@ -15,20 +16,20 @@ navigator.mediaDevices
     alert('웹캠에 접근할 수 없습니다. 브라우저 권한을 확인하세요.');
   });
 
+let countdownTimer;
+
 function startCountdown() {
-  let timeLeft = 3;
-  countdown.textContent = timeLeft;
+  let countdownValue = 3;
+  countdown.textContent = countdownValue;
   countdown.style.display = 'block';
 
-  const timer = setInterval(() => {
-    timeLeft--;
-    countdown.textContent = timeLeft;
+  countdownTimer = setInterval(() => {
+    countdownValue--;
+    countdown.textContent = countdownValue;
 
-    if (timeLeft <= 0) {
-      clearInterval(timer);
+    if (countdownValue === 0) {
+      clearInterval(countdownTimer);
       countdown.style.display = 'none';
-
-      // 사진 캡처 및 저장
       capturePhoto();
     }
   }, 1000);
@@ -39,6 +40,10 @@ function capturePhoto() {
   const context = canvas.getContext('2d');
   canvas.width = video.videoWidth;
   canvas.height = video.videoHeight;
+
+  // 거울 모드로 이미지 그리기
+  context.translate(canvas.width, 0);
+  context.scale(-1, 1);
   context.drawImage(video, 0, 0, canvas.width, canvas.height);
 
   // 캡처된 이미지 데이터 URL 생성
@@ -50,17 +55,16 @@ function capturePhoto() {
 
   const img = document.createElement('img');
   img.src = dataURL;
-
-  const saveButton = document.createElement('a');
-  saveButton.className = 'save-button';
-  saveButton.href = dataURL;
-  saveButton.download = `captured_image_${Date.now()}.png`;
-  saveButton.textContent = '사진 저장';
+  img.style.width = `${canvas.width}px`;
+  img.style.height = `${canvas.height}px`;
 
   snapshot.appendChild(img);
-  snapshot.appendChild(saveButton);
   snapshotContainer.appendChild(snapshot);
 
-  // 자동으로 사진 저장
-  saveButton.click();
+  // 사용자 컴퓨터에 자동으로 사진 저장
+  const link = document.createElement('a');
+  link.href = dataURL;
+  link.download = `captured_image_${Date.now()}.png`;
+  link.click();
 }
+
