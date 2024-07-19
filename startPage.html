@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>마법의 거울 - 시작 페이지</title>
+    <style>
+        body {
+            margin: 0;
+            overflow: hidden;
+        }
+        .page {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            background-size: cover;
+            background-position: center;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        #startpage {
+            background-image: url('/image/startpage_de.jpg');
+        }
+    </style>
+</head>
+<body>
+    <!-- 시작 페이지 -->
+    <div id="startpage" class="page">
+        <div id="clickArea" style="width: 100%; height: 100%;" onclick="goToExplanationPage()"></div>
+    </div>
+    <script>
+        function goToExplanationPage() {
+            window.location.href = 'descriptionPage.html';
+        }
+    </script>
+</body>
+</html>

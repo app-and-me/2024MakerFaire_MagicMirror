@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>사진 찍기</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            padding: 20px;
+            background-image: url('/image/background.jpg');
+            background-size: cover;
+            background-position: center;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            margin: 0;
+        }
+        h1 {
+            text-align: center;
+        }
+        #camera-container {
+            position: relative;
+            width: 80%;
+            max-width: 640px;
+            margin: 20px auto;
+            text-align: center;
+        }
+        #camera {
+            width: 100%;
+            height: auto;
+            border: 1px solid black;
+            display: block;
+            margin: 0 auto;
+        }
+        #countdown {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 48px;
+            color: violet;
+            background-color: rgba(255, 255, 255, 0.7);
+            padding: 10px;
+            border-radius: 10px;
+            display: none;
+        }
+        #snapshot-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            justify-content: center;
+            margin-top: 20px;
+            width: 100%;
+        }
+        .snapshot {
+            position: relative;
+            border: 1px solid black;
+            flex: 0 0 calc(33.33% - 20px);
+            max-width: calc(33.33% - 20px);
+            box-sizing: border-box;
+        }
+        .snapshot img {
+            width: 100%;
+            display: block;
+        }
+        .save-button {
+            display: block;
+            margin: 5px auto;
+            padding: 5px 10px;
+            font-size: 12px;
+            cursor: pointer;
+            background-color: white;
+            border: 1px solid black;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+    <div id="camera-container">
+        <video id="camera" autoplay playsinline></video>
+        <div id="countdown"></div>
+    </div>
+    <div id="snapshot-container"></div>
+
+    <script>
+        const video = document.getElementById('camera');
+        const snapshotContainer = document.getElementById('snapshot-container');
+        const countdown = document.getElementById('countdown');
+
+        navigator.mediaDevices.getUserMedia({ video: true })
+            .then((stream) => {
+                video.srcObject = stream;
+                video.play();
+                startCountdown();
+            })
+
+        function startCountdown() {
+            let timeLeft = 3;
+            countdown.textContent = timeLeft;
+            countdown.style.display = 'block';
+
+            const timer = setInterval(() => {
+                timeLeft--;
+                countdown.textContent = timeLeft;
+
+                if (timeLeft <= 0) {
+                    clearInterval(timer);
+                    countdown.style.display = 'none';
+
+                    capturePhoto();
+                }
+            }, 1000);
+        }
+
+        function capturePhoto() {
+            const canvas = document.createElement('canvas');
+            const context = canvas.getContext('2d');
+            canvas.width = video.videoWidth;
+            canvas.height = video.videoHeight;
+            context.drawImage(video, 0, 0, canvas.width, canvas.height);
+
+            const dataURL = canvas.toDataURL('image/png');
+
+            const snapshot = document.createElement('div');
+            snapshot.className = 'snapshot';
+
+            const img = document.createElement('img');
+            img.src = dataURL;
+
+            const saveButton = document.createElement('a');
+            saveButton.className = 'save-button';
+            saveButton.href = dataURL;
+            saveButton.download = `captured_image_${Date.now()}.png`;
+            saveButton.textContent = '사진 저장';
+
+            snapshot.appendChild(img);
+            snapshot.appendChild(saveButton);
+            snapshotContainer.appendChild(snapshot);
+
+            saveButton.click();
+        }
+    </script>
+</body>
+</html>
