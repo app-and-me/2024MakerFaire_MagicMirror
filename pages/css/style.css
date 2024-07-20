@@ -3,7 +3,6 @@ body {
   overflow: hidden;
 }
 
-/* 시작 페이지 */
 .page {
   position: absolute;
   width: 100%;
@@ -15,24 +14,26 @@ body {
   justify-content: center;
 }
 
-/* 설명 페이지 */
+/* 시작 페이지 */
 
 #start-page {
-  background-image: url('/image/startpage_de.jpg');
+  background-image: url('../assets/images/start_img.jpg');
 }
 
+/* 설명 페이지 */
+
 #explanation-page {
-  background-image: url('../image/account.png');
+  background-image: url('../assets/images/description_img.png');
 }
 
 .arrow {
   position: fixed;
-  font-size: 8em;
+  font-size: 65px;
   color: #3F0096;
   cursor: pointer;
-  top: 50vh;
-  left: 50vw;
-  transform: translate(-111%, 229%);
+  top: 395px;
+  left: 705px;
+  transform: translate(-113%, 225%);
   opacity: 1;
 }
 
