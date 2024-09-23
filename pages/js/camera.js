@@ -35,7 +35,7 @@ function startCountdown() {
   }, 1000);
 }
 
-function capturePhoto() {
+async function capturePhoto() {
   const canvas = document.createElement('canvas');
   const context = canvas.getContext('2d');
   canvas.width = video.videoWidth;
@@ -61,10 +61,13 @@ function capturePhoto() {
   snapshot.appendChild(img);
   snapshotContainer.appendChild(snapshot);
 
-  // 사용자 컴퓨터에 자동으로 사진 저장
-  const link = document.createElement('a');
-  link.href = dataURL;
-  link.download = `captured_image_${Date.now()}.png`;
-  link.click();
+  await fetch(`http://192.168.1.171:5500/picture/saveImage`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({
+      imageUrl: dataURL,
+    }),
+  });
 }
-

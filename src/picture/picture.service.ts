@@ -2,6 +2,7 @@ import { Injectable, HttpException, HttpStatus } from '@nestjs/common';
 import * as fs from 'fs';
 import model from 'src/config/model';
 import { PythonShell } from 'python-shell';
+import * as path from 'path';
 
 function fileToGenerativePart(path: fs.PathOrFileDescriptor, mimeType: string) {
   return {
@@ -14,6 +15,25 @@ function fileToGenerativePart(path: fs.PathOrFileDescriptor, mimeType: string) {
 
 @Injectable()
 export class PictureService {
+  async saveImage(imageUrl: string): Promise<void> {
+    const directoryPath = path.join(__dirname, '../../pages/assets/results');
+
+    const files = fs.readdirSync(directoryPath);
+    const imageFiles = files.filter((file) => file.endsWith('.png'));
+
+    const lastNumber =
+      imageFiles.length > 0
+        ? Math.max(...imageFiles.map((file) => parseInt(file.split('.')[0])))
+        : 0;
+
+    const newFileName = `${lastNumber + 1}.png`;
+    const newFilePath = path.join(directoryPath, newFileName);
+
+    fs.writeFileSync(newFilePath, imageUrl.split(';base64,').pop(), {
+      encoding: 'base64',
+    });
+  }
+
   async generateCharacterName(): Promise<string> {
     try {
       const prompt = `이 사진속 인물과 비슷하게 생긴 동화속 인물\n

@@ -16,6 +16,11 @@ import { Response } from 'express'; // Add this line
 export class PictureController {
   constructor(private readonly pictureService: PictureService) {}
 
+  @Post('saveIamge')
+  async saveImage(@Body('imageUrl') imageUrl: string) {
+    this.pictureService.saveImage(imageUrl);
+  }
+
   @Post('generateCharacterName')
   @UseInterceptors(FileInterceptor('image'))
   async generateCharacterName(
