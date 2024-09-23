@@ -3,6 +3,7 @@ import {
   Controller,
   HttpStatus,
   Post,
+  Get,
   Res,
   UploadedFile,
   UseInterceptors,
@@ -10,15 +11,21 @@ import {
 import { FileInterceptor } from '@nestjs/platform-express';
 import { PictureService } from './picture.service';
 import * as fs from 'fs';
-import { Response } from 'express'; // Add this line
+import { Response } from 'express';
+import { StickerDataDto } from './dto/sticker.dto';
 
 @Controller('picture')
 export class PictureController {
   constructor(private readonly pictureService: PictureService) {}
 
-  @Post('saveIamge')
+  @Post('saveImage')
   async saveImage(@Body('imageUrl') imageUrl: string) {
     this.pictureService.saveImage(imageUrl);
+  }
+
+  @Get('getLastImageNumber')
+  async getLastImageNumber(): Promise<number> {
+    return this.pictureService.getLastImageNumber();
   }
 
   @Post('generateCharacterName')
@@ -47,9 +54,10 @@ export class PictureController {
   async applySticker(
     @UploadedFile() image: Express.Multer.File,
     @Res() res: Response,
-    @Body('stickerNames') stickerNames: string[],
-    @Body('hairData') hairData: string[],
+    @Body() body: StickerDataDto,
   ): Promise<Buffer> {
+    const { stickerNames, hairData } = body;
+
     if (!image) {
       throw new Error('Image file is required');
     }

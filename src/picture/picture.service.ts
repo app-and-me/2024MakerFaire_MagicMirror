@@ -1,8 +1,8 @@
 import { Injectable, HttpException, HttpStatus } from '@nestjs/common';
-import * as fs from 'fs';
 import model from 'src/config/model';
 import { PythonShell } from 'python-shell';
 import * as path from 'path';
+import * as fs from 'fs';
 
 function fileToGenerativePart(path: fs.PathOrFileDescriptor, mimeType: string) {
   return {
@@ -15,21 +15,37 @@ function fileToGenerativePart(path: fs.PathOrFileDescriptor, mimeType: string) {
 
 @Injectable()
 export class PictureService {
-  async saveImage(imageUrl: string): Promise<void> {
+  async getLastImageNumber(): Promise<number> {
     const directoryPath = path.join(__dirname, '../../pages/assets/results');
 
     const files = fs.readdirSync(directoryPath);
     const imageFiles = files.filter((file) => file.endsWith('.png'));
 
-    const lastNumber =
-      imageFiles.length > 0
-        ? Math.max(...imageFiles.map((file) => parseInt(file.split('.')[0])))
-        : 0;
+    return imageFiles.length > 0
+      ? Math.max(...imageFiles.map((file) => parseInt(file.split('.')[0])))
+      : 0;
+  }
 
-    const newFileName = `${lastNumber + 1}.png`;
-    const newFilePath = path.join(directoryPath, newFileName);
+  async saveImage(imageUrl: string): Promise<void> {
+    const newFileName = `${(await this.getLastImageNumber()) + 1}.png`;
+    const newFilePath = path.join('./pages/assets/results/', newFileName);
 
-    fs.writeFileSync(newFilePath, imageUrl.split(';base64,').pop(), {
+    const directoryPath = path.dirname(newFilePath);
+    if (!fs.existsSync(directoryPath)) {
+      fs.mkdirSync(directoryPath, { recursive: true });
+    }
+
+    const base64Data = imageUrl.includes(';base64,')
+      ? imageUrl.split(';base64,').pop()
+      : '';
+    if (!base64Data) {
+      throw new HttpException(
+        'Invalid image URL format.',
+        HttpStatus.BAD_REQUEST,
+      );
+    }
+
+    fs.writeFileSync(newFilePath, base64Data, {
       encoding: 'base64',
     });
   }
@@ -100,6 +116,8 @@ export class PictureService {
     return new Promise((resolve, reject) => {
       const stickerData = JSON.stringify({ stickerNames });
       const hair = JSON.stringify({ hairData });
+
+      console.log('stickerData:', stickerData);
 
       const options = {
         pythonOptions: ['-u'],
