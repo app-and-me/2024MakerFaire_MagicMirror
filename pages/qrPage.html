@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        body {
+            margin: 0;
+            overflow: hidden;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="qrcode"></div>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.qrcode/1.0/jquery.qrcode.min.js"></script>
+    <script>
+        $(document).ready(function () {
+            $("#qrcode").qrcode({
+                text: "pages/assets/images/Vector.png", // 임의의 이미지 URL
+                width: 128,
+                height: 128,
+                background: "#ffffff",
+                foreground: "#000000"
+            });
+        });
+    </script>
+    <div class="mirror"><img src="../pages/assets/images/mirror.png"></div>
+    <div class="outline"><img src="../pages/assets/images/outLine.png"></div>
+</body>
+
+</html>
