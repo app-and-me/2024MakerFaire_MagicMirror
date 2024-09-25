@@ -53,45 +53,12 @@ export class PictureService {
   async generateCharacterName(): Promise<string> {
     try {
       const prompt = `이 사진속 인물과 비슷하게 생긴 동화속 인물\n
-                      list(백설공주
-                      신데렐라
-                      잠자는 숲속의 공주
-                      피노키오
-                      알라딘
-                      올라프
-                      엘사
-                      안나
-                      장화신은 고양이
-                      인어공주
-                      백설공주의 일곱 난쟁이
-                      신데렐라의 마법의 요정
-                      피터팬
-                      겨울왕국 트롤
-                      후크선장
-                      토토
-                      도로시
-                      마녀
-                      오즈의 마법사
-                      벨
-                      야수
-                      아리엘
-                      에릭 왕자
-                      미녀와 야수
-                      알라딘
-                      자스민 공주
-                      라푼젤
-                      플린 라이더
-                      크리스토프
-                      타잔
-                      마우이
-                      미키마우스)\n
-
+                      list(난쟁이,라푼젤,마우이,메타몽,모아나,뮬란,미키마우스,바넬로피,백설공주,벨,신데렐라,신데렐라의마법의요정,아리엘,안나,알라딘,야수,에릭왕자,엘리스,엘사,올라프,자스민,잠자는숲속의공주,장화신은고양이,주먹왕랄프,크리스토프,타잔,토토로,트롤,플린라이더,피노키오,피터팬,한스,후크선장)\n
                       사람을 사람이라고 생각하지 말고 사람 캐릭터가 아닌 캐릭터도 포함해야 되니까 느낌이 비슷한걸로\n
-
-                      list에서 하나 골라서\n 괄호같은거 없이 \n 
-                      왼쪽 사람 부터 각각 한 캐릭터 씩만 말해\n
-
-                      주관적인 해석이 들어가도 돼 \n
+                      list() 안에서 하나 골라서\n 괄호같은거 없이
+                      왼쪽 사람 부터 각각 한 캐릭터 씩만 말해
+                      주관적인 해석이 들어가도 돼 얼굴이 잘 보이는 사람만 해\n
+                      list() 안의 캐릭터 중 하나로 골라
                       `;
       const imageParts = [
         fileToGenerativePart('src/assets/image.png', 'image/png'),
@@ -117,8 +84,6 @@ export class PictureService {
       const stickerData = JSON.stringify({ stickerNames });
       const hair = JSON.stringify({ hairData });
 
-      console.log('stickerData:', stickerData);
-
       const options = {
         pythonOptions: ['-u'],
         args: [stickerData, hair],
@@ -135,8 +100,14 @@ export class PictureService {
         reject(err);
       });
 
-      pyshell.on('close', () => {
-        resolve(fs.readFileSync('src/assets/out.png'));
+      pyshell.on('close', async () => {
+        resolve(
+          fs.readFileSync(
+            path.join(
+              `./pages/assets/results/${await this.getLastImageNumber()}.png`,
+            ),
+          ),
+        );
       });
     });
   }

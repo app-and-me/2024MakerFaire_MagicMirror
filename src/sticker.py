@@ -17,13 +17,13 @@ def apply_sticker(image, landmarks, sticker, sticker_type):
 
     if sticker_type == "hair":
         # 머리 위 스티커
-        sticker_width = int(face_width * 1.4)
+        sticker_width = int(face_width * 2)
         aspect_ratio = sticker.shape[1] / sticker.shape[0]
         sticker_height = int(sticker_width / aspect_ratio)
         resized_sticker = cv2.resize(sticker, (sticker_width, sticker_height))
 
-        forehead_y = int(landmarks.part(21).y - sticker_height * 0.6)
-        forehead_x = int(landmarks.part(27).x - sticker_width // 2)
+        forehead_y = int(landmarks.part(21).y - sticker_height * 0.5)
+        forehead_x = int(landmarks.part(27).x - sticker_width * 0.45)
         x = forehead_x
         y = forehead_y
     else:
@@ -117,4 +117,15 @@ if __name__ == "__main__":
                 print(f"Warning: Sticker not found: {sticker_path}", file=sys.stderr)
                 
     # 결과 저장
-    cv2.imwrite("src/assets/out.png", image)
+    output_folder = "pages/assets/results/"
+    existing_files = [f for f in os.listdir(output_folder) if f.endswith(".png")]
+    if existing_files:
+        existing_numbers = [int(f.split('.')[0]) for f in existing_files if f.split('.')[0].isdigit()]
+        next_number = max(existing_numbers) if existing_numbers else 1
+    else:
+        next_number = 1
+
+    print(next_number)
+    # 결과 저장
+    output_path = os.path.join(output_folder, f"{next_number}.png")
+    cv2.imwrite(output_path, image)
