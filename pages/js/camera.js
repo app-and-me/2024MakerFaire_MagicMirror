@@ -27,9 +27,9 @@ function startCountdown() {
       countdown.textContent = countdownValue;
 
       if (countdownValue === 0) {
+        resolve();
         clearInterval(countdownTimer);
         countdown.style.display = 'none';
-        resolve();
       }
     }, 1000);
   });
@@ -56,7 +56,6 @@ async function capturePhoto() {
     await generateCharacterName();
   } catch (error) {
     console.error('이미지 저장 실패:', error);
-    alert('이미지 저장에 실패했습니다.');
   }
 }
 
@@ -85,10 +84,10 @@ async function generateCharacterName() {
       },
     ).then((res) => res.text());
 
-    await applySticker(result);
+    console.log('캐릭터 이름 생성 성공:', result);
+    applySticker(result);
   } catch (error) {
     console.error('캐릭터 이름 생성 실패:', error);
-    alert('캐릭터 이름 생성에 실패했습니다.');
   }
 }
 
@@ -100,26 +99,26 @@ async function applySticker(name) {
     const imageUrl = `../../pages/assets/results/${lastNumber}.png`;
     const blob = await fetchImage(imageUrl);
 
+    name = name.replace(/\s\r\n/g, '').trim();
+
     const formData = new FormData();
     formData.append('image', blob, `${lastNumber}.png`);
-    formData.append('stickerNames', name.replace(/\W/g, ''));
-    formData.append('hairData', 'default');
+    formData.append('stickerNames', name);
+    formData.append('hairData', 'hair');
 
     await fetch('http://localhost:5500/picture/applySticker', {
       method: 'POST',
       body: formData,
     });
-
     goToNextPage();
   } catch (error) {
+    console.log(error);
     console.error('스티커 적용 실패:', error);
-    alert('스티커 적용에 실패했습니다.');
   }
 }
 
 function goToNextPage() {
-  window.location.href = 'descriptionPage.html';
+  window.location.href = 'result.html';
 }
 
-// 웹캠 초기화 및 프로세스 시작
 initializeWebcam().then(capturePhoto).catch(console.error);
