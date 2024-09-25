@@ -4,6 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>framePage</title>
+  
   <style>
     body {
       display: flex;
@@ -41,26 +42,34 @@
     .card.left {
       left: 0;
       transform: translateX(-300px) scale(0.8);
-      background-image: url('../pages/assets/images/frame1.jpg');
+      
     }
     .card.center {
       left: 50%;
       transform: translateX(-50%) scale(1.1);
       z-index: 1;
-      background-image: url('../pages/assets/images/frame2.jpg');
+      
     }
     .card.right {
       right: 0;
       transform: translateX(300px) scale(0.8);
-      background-image: url('../pages/assets/images/frame3.jpg');
+    }
+    #first{
+        background-image: url('../pages/assets/images/frame1.jpg');
+    }
+    #second{
+        background-image: url('../pages/assets/images/frame2.jpg');
+    }
+    #third{
+        background-image: url('../pages/assets/images/frame3.jpg');
     }
   </style>
 </head>
 <body>
   <div class="carousel">
-    <div class="card left" onclick="moveCards('left')">카드 1</div>
-    <div class="card center" onclick="moveCards('center')">카드 2</div>
-    <div class="card right" onclick="moveCards('right')">카드 3</div>
+    <div class="card left" id="first" onclick="moveCards('left')"></div>
+    <div class="card center" id="second" onclick="moveCards('center')"></div>
+    <div class="card right" id="third" onclick="moveCards('right')"></div>
   </div>
 
   <script>
