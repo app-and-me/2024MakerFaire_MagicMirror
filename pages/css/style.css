@@ -31,8 +31,8 @@ body {
   font-size: 65px;
   color: #3F0096;
   cursor: pointer;
-  top: 395px;
-  left: 705px;
+  top: 510px;
+  left: 910px;
   transform: translate(150%, 20%);
   opacity: 1;
 }
@@ -146,4 +146,3 @@ body {
     margin-left: 190%;
     margin-bottom: 210%;
 }
-
