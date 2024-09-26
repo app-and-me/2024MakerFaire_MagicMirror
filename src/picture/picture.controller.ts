@@ -56,7 +56,7 @@ export class PictureController {
     @Res() res: Response,
     @Body() body: StickerDataDto,
   ): Promise<Buffer> {
-    const { stickerNames, hairData } = body;
+    const { stickerNames } = body;
 
     if (!image) {
       throw new Error('Image file is required');
@@ -68,7 +68,6 @@ export class PictureController {
 
       const imageBuffer = await this.pictureService.applySticker(
         stickerNames,
-        hairData,
       );
 
       res.setHeader('Content-Type', 'image/png');

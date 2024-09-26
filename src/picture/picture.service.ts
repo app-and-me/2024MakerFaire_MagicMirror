@@ -78,15 +78,13 @@ export class PictureService {
 
   async applySticker(
     stickerNames: string[],
-    hairData: string[],
   ): Promise<Buffer> {
     return new Promise((resolve, reject) => {
       const stickerData = JSON.stringify({ stickerNames });
-      const hair = JSON.stringify({ hairData });
 
       const options = {
         pythonOptions: ['-u'],
-        args: [stickerData, hair],
+        args: [stickerData],
       };
 
       const pyshell = new PythonShell('src/sticker.py', options);
