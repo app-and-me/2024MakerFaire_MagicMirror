@@ -106,7 +106,7 @@ if __name__ == "__main__":
     existing_files = [f for f in os.listdir(output_folder) if f.endswith(".png")]
     if existing_files:
         existing_numbers = [int(f.split('.')[0]) for f in existing_files if f.split('.')[0].isdigit()]
-        next_number = max(existing_numbers) + 1 if existing_numbers else 1
+        next_number = max(existing_numbers) if existing_numbers else 1
     else:
         next_number = 1
 
