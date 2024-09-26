@@ -56,7 +56,7 @@ export class PictureController {
     @Res() res: Response,
     @Body() body: StickerDataDto,
   ): Promise<Buffer> {
-    const { stickerNames, hairData } = body;
+    const { stickerNames } = body;
 
     if (!image) {
       throw new Error('Image file is required');
@@ -66,10 +66,7 @@ export class PictureController {
       const imagePath = `src/assets/image.png`;
       fs.writeFileSync(imagePath, image.buffer);
 
-      const imageBuffer = await this.pictureService.applySticker(
-        stickerNames,
-        hairData,
-      );
+      const imageBuffer = await this.pictureService.applySticker(stickerNames);
 
       res.setHeader('Content-Type', 'image/png');
       res.setHeader('Content-Disposition', 'attachment; filename=sticker.png');

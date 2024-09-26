@@ -8,35 +8,24 @@ import json
 face_detector = dlib.get_frontal_face_detector()
 landmark_predictor = dlib.shape_predictor("src/assets/models/shape_predictor_68_face_landmarks.dat")
 
-def apply_sticker(image, landmarks, sticker, sticker_type):
+def apply_sticker(image, landmarks, sticker):
     # 얼굴 영역 계산
     x, y = landmarks.part(0).x, landmarks.part(0).y
     x_end, y_end = landmarks.part(16).x, landmarks.part(8).y
     face_width = x_end - x
     face_height = y_end - y
 
-    if sticker_type == "hair":
-        # 머리 위 스티커
-        sticker_width = int(face_width * 2)
-        aspect_ratio = sticker.shape[1] / sticker.shape[0]
-        sticker_height = int(sticker_width / aspect_ratio)
-        resized_sticker = cv2.resize(sticker, (sticker_width, sticker_height))
+    # 스티커 크기 조정
+    sticker_width = int(face_width * 2)
+    aspect_ratio = sticker.shape[1] / sticker.shape[0]
+    sticker_height = int(sticker_width / aspect_ratio)
+    resized_sticker = cv2.resize(sticker, (sticker_width, sticker_height))
 
-        forehead_y = int(landmarks.part(21).y - sticker_height * 0.5)
-        forehead_x = int(landmarks.part(27).x - sticker_width * 0.45)
-        x = forehead_x
-        y = forehead_y
-    else:
-        # 기본 스티커
-        sticker_width = int(face_width * 1.4)
-        aspect_ratio = sticker.shape[1] / sticker.shape[0]
-        sticker_height = int(sticker_width / aspect_ratio)
-        resized_sticker = cv2.resize(sticker, (sticker_width, sticker_height))
-
-        forehead_y = int(landmarks.part(21).y - sticker_height * 0.2) 
-        forehead_x = int(landmarks.part(27).x - sticker_width // 2)
-        x = forehead_x
-        y = forehead_y
+    # 스티커 위치 계산
+    forehead_y = int(landmarks.part(21).y - sticker_height * 0.45) 
+    forehead_x = int(landmarks.part(27).x - sticker_width // 2)
+    x = forehead_x
+    y = forehead_y
 
     if y < 0:
         sticker_overflow = -y
@@ -70,7 +59,6 @@ if __name__ == "__main__":
     try:
         # js에서 값 받기
         sticker_names = json.loads(sys.argv[1])["stickerNames"].replace(" ", "").split(',') 
-        hairData = json.loads(sys.argv[2])["hairData"].replace(" ", "").split(',') 
     except (IndexError, json.JSONDecodeError) as e:
         print(f"Error: Invalid input arguments. {e}", file=sys.stderr)
         sys.exit(1) 
@@ -97,31 +85,28 @@ if __name__ == "__main__":
     # 얼굴 감지
     faces = face_detector(image)
 
+    # 얼굴들을 왼쪽에서 오른쪽으로 정렬
+    sorted_faces = sorted(faces, key=lambda rect: rect.left())
+
     # 각 얼굴에 스티커 적용
-    for i, face in enumerate(faces):
+    for face, sticker_name in zip(sorted_faces, sticker_names):
         # 얼굴 랜드마크 찾기
         landmarks = landmark_predictor(image, face)
 
         # 스티커 적용
-        for sticker_name in sticker_names:
-            hair = hairData[sticker_names.index(sticker_name)]
-
-            sticker_path = os.path.join(sticker_folder, f"{sticker_name}.png")
-            if os.path.exists(sticker_path):
-                sticker = cv2.imread(sticker_path, cv2.IMREAD_UNCHANGED)
-                if hair == 'hair':
-                    image = apply_sticker(image, landmarks, sticker, "hair")
-                elif hair == 'default':
-                    image = apply_sticker(image, landmarks, sticker, "default")  
-            else:
-                print(f"Warning: Sticker not found: {sticker_path}", file=sys.stderr)
+        sticker_path = os.path.join(sticker_folder, f"{sticker_name}.png")
+        if os.path.exists(sticker_path):
+            sticker = cv2.imread(sticker_path, cv2.IMREAD_UNCHANGED)
+            image = apply_sticker(image, landmarks, sticker)
+        else:
+            print(f"Warning: Sticker not found: {sticker_path}", file=sys.stderr)
                 
     # 결과 저장
     output_folder = "pages/assets/results/"
     existing_files = [f for f in os.listdir(output_folder) if f.endswith(".png")]
     if existing_files:
         existing_numbers = [int(f.split('.')[0]) for f in existing_files if f.split('.')[0].isdigit()]
-        next_number = max(existing_numbers) if existing_numbers else 1
+        next_number = max(existing_numbers) + 1 if existing_numbers else 1
     else:
         next_number = 1
 
