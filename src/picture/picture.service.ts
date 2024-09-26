@@ -76,9 +76,7 @@ export class PictureService {
     }
   }
 
-  async applySticker(
-    stickerNames: string[],
-  ): Promise<Buffer> {
+  async applySticker(stickerNames: string[]): Promise<Buffer> {
     return new Promise((resolve, reject) => {
       const stickerData = JSON.stringify({ stickerNames });
 

@@ -66,9 +66,7 @@ export class PictureController {
       const imagePath = `src/assets/image.png`;
       fs.writeFileSync(imagePath, image.buffer);
 
-      const imageBuffer = await this.pictureService.applySticker(
-        stickerNames,
-      );
+      const imageBuffer = await this.pictureService.applySticker(stickerNames);
 
       res.setHeader('Content-Type', 'image/png');
       res.setHeader('Content-Disposition', 'attachment; filename=sticker.png');
