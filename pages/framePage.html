@@ -26,7 +26,6 @@
       position: absolute;
       width: 350px;
       height: 400px;
-      background-color: white;
       border-radius: 10px;
       box-shadow: 0 4px 8px rgba(0,0,0,0.1);
       display: flex;
@@ -35,9 +34,10 @@
       font-size: 24px;
       transition: all 0.5s ease;
       cursor: pointer;
-      background-size: cover; /* 이미지를 카드 크기에 맞추되, 잘리는 부분이 생길 수 있음 */
-      background-position: center; /* 이미지의 중앙을 표시 */
-      background-repeat: no-repeat; /* 이미지를 반복하지 않음 */
+      overflow: hidden;
+      background-size: cover;
+      background-position: center;
+      background-repeat: no-repeat;
     }
     .card.left {
       left: 0;
@@ -54,14 +54,21 @@
       right: 0;
       transform: translateX(300px) scale(0.8);
     }
-    #first{
-        background-image: url('../pages/assets/images/frame1.jpg');
+
+    #first {
+      background-image: url('../pages/assets/images/frame1.png');
+      background-size: cover, cover;
+      background-position: center, center;
     }
-    #second{
-        background-image: url('../pages/assets/images/frame2.jpg');
+    #second {
+      background-image: url('../pages/assets/images/frame2.png');
+      background-size: cover, cover;
+      background-position: center, center;
     }
-    #third{
-        background-image: url('../pages/assets/images/frame3.jpg');
+    #third {
+      background-image: url('../pages/assets/images/frame3.png');
+      background-size: cover, cover;
+      background-position: center, center;
     }
   </style>
 </head>
@@ -73,6 +80,28 @@
   </div>
 
   <script>
+    setBackgroundImages();
+
+    async function fetchImage(url) {
+      const response = await fetch(url);
+      if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+      return await response.blob();
+    }
+
+    async function setBackgroundImages() {
+        const lastNumber = await fetch(
+          'https://appandme.3xhaust.dev/picture/getLastImageNumber'
+        ).then((res) => res.text());
+
+        
+        const imageUrl = `https://appandme.3xhaust.dev?id=${lastNumber}`;
+        console.log(imageUrl);
+        
+        document.getElementById('first').style.backgroundImage = `url('../pages/assets/images/frame1.png'), url('${imageUrl}')`;
+        document.getElementById('second').style.backgroundImage = `url('../pages/assets/images/frame2.png'), url('${imageUrl}')`;
+        document.getElementById('third').style.backgroundImage = `url('../pages/assets/images/frame3.png'), url('${imageUrl}')`;
+    }
+
     function moveCards(direction) {
       const cards = document.querySelectorAll('.card');
       const positions = ['left', 'center', 'right'];
