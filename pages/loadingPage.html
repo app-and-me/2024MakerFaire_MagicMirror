@@ -42,20 +42,21 @@
           body: formData,
         }).then(res => res.text());
 
+        console.log(characterName);
+
         const stickerFormData = new FormData();
         stickerFormData.append('image', blob, `${lastNumber}.png`);
-        stickerFormData.append('stickerNames', characterName.replace(/\r/g, '').trim().replace(/\n/g, ','));
+        stickerFormData.append('stickerNames', characterName.replace(/\n/g, ''));
 
         await fetch('https://appandme.3xhaust.dev/picture/applySticker', {
           method: 'POST',
           body: stickerFormData,
-        });
+        })
 
         window.location.href = 'resultPage.html';
       } catch (error) {
         console.error('이미지 처리 실패:', error);
-        alert('이미지 처리에 실패했습니다. 다시 시도해 주세요.');
-        window.location.href = 'cameraPage.html';
+        //window.location.href = 'cameraPage.html';
       }
     }
 
