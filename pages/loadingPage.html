@@ -1,18 +1,21 @@
-<!DOCTYPE html> 
-<html lang="ko"> 
-<head> 
+<!DOCTYPE html>
+<html lang="ko">
+
+<head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"> 
-  <title>마법의 거울 - 로딩</title> 
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>마법의 거울 - 로딩</title>
   <link rel="stylesheet" href="./css/style.css">
 </head>
+
 <body>
-  <div class="container"> 
-    <img src="성 내부 사진.png" alt="Image 1"> 
-    <img src="회오리.png" alt="Image 2" class="overlay">
-    <h1 class="image_text" style="font-size: 100px;">당신의 전생은...</h1>
+  <div class="container">
+    <img src="../pages/assets/images/background.jpg" alt="Image 1">
+    <h1 class="image_text" style="font-size: 50px;">당신의 전생은...</h1>
   </div>
-  <div class="box"><div class="rectangle"></div></div>
+  <div class="box">
+    <div class="rectangle"></div>
+  </div>
 
   <script>
     async function processImage() {
@@ -64,5 +67,6 @@
     // 페이지 로드 시 이미지 처리 시작
     window.addEventListener('load', processImage);
   </script>
-</body> 
+</body>
+
 </html>

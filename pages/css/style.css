@@ -110,10 +110,9 @@ body {
 }
 .box .rectangle {
   position: absolute;
-  width: 1288px;
-  height: 685px;
-  top: 283px;
-  left: 316px;
+  width: 900px;
+  height: 475px;
+  bottom: 85px;
   background-color: #c6c6c6;
 }
 .container { text-align: center; } 
@@ -130,7 +129,7 @@ body {
   position: absolute;
   top: 50%;
   left: 50%;
-  transform: translate(-50%,-400%);
+  transform: translate(-50%,-550%);
   color: white;
 }
 
