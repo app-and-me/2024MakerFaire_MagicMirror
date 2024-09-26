@@ -23,14 +23,15 @@
       }
 
       try {
+        const lastNumber = await fetch('https://appandme.3xhaust.dev/picture/getLastImageNumber')
+          .then(res => res.text());
+
         await fetch('https://appandme.3xhaust.dev/picture/saveImage', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ imageUrl: dataURL }),
         });
 
-        const lastNumber = await fetch('https://appandme.3xhaust.dev/picture/getLastImageNumber')
-          .then(res => res.text());
 
         const imageUrl = `https://appandme.3xhaust.dev?id=${lastNumber}`;
         const blob = await fetch(imageUrl).then(res => res.blob());

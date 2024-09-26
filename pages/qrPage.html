@@ -4,71 +4,150 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <title>QR Page</title>
     <style>
         body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
             margin: 0;
-            padding: 0;
-            width: 100%;
-            height: 100%;
-            overflow: hidden;
-        }
-
-        .background {
-            background-image: url('../pages/assets/images/background.jpg');
+            background-image: url('./assets/images/background.jpg');
             background-size: cover;
             background-position: center;
-            width: 100%;
-            height: 100%;
-            position: fixed;
+            overflow: hidden;
+            font-family: Arial, sans-serif;
         }
 
         #qrcode {
             position: absolute;
             z-index: 20;
-            transform: translate(900%, 580%);
+            transform: translate(350%, 390%);
         }
 
         .frame {
-            position: absolute;
-            top: 5%;
-            left: 30%;
-            width: 130px;
-            height: 130px;
-            z-index: 10;
+            width: 600px;
+            height: 750px;
+            display: flex;
+            overflow: hidden;
+            background-repeat: no-repeat;
+            background-size: cover, cover;
+            background-position: center, center;
+        }
+
+        .result {
+            position: relative;
+            display: flex;
+            justify-content: center;
+            align-items: center;
         }
     </style>
+    <script src="https://html2canvas.hertzen.com/dist/html2canvas.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.qrcode/1.0/jquery.qrcode.min.js"></script>
 </head>
 
 <body>
-    <div id="qrcode"></div>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.qrcode/1.0/jquery.qrcode.min.js"></script>
+    <div class="result">
+        <div id="qrcode"></div>
+        <div class="frame" id="frame"></div>
+    </div>
+
     <script>
-        async function sendApiRequest() {
+        $(document).ready(function () {
+            sendApiRequest();
+
+            // Ensure setBackgroundImages completes before calling saveImage
+            setBackgroundImages().then(() => {
+                saveImage();
+            });
+        });
+
+        async function saveImage() {
             try {
+                const resultElement = document.querySelector('.result');
+
                 const lastNumber = await fetch('https://appandme.3xhaust.dev/picture/getLastImageNumber')
-                    .then((res) => res.text());
+                    .then(res => res.text());
 
-                $("#qrcode").qrcode({
-                    text: 'https://appandme.3xhaust.dev?id=' + lastNumber,
-                    width: 100,
-                    height: 100,
-                    background: "#ffffff",
-                    foreground: "#000000"
-                });
+                // Validate and access background image safely
+                const frameBackgroundImage = document.getElementById('frame').style.backgroundImage;
+                let frameImageSrc = './assets/images/frame1.png'; // Default image
+                if (frameBackgroundImage) {
+                    const backgroundImageUrls = frameBackgroundImage.split(', ');
+                    if (backgroundImageUrls.length > 1) {
+                        frameImageSrc = backgroundImageUrls[1].slice(4, -1).replace(/"/g, '');
+                    } else {
+                        console.warn("Only one background image found or incorrect format.");
+                    }
+                } else {
+                    console.warn("Background image not yet set.");
+                }
 
+                const frameImage = new Image();
+                frameImage.src = frameImageSrc;
+                frameImage.onload = async () => {
+                    const canvas = await html2canvas(resultElement, { useCORS: true });
+                    const ctx = canvas.getContext('2d');
+
+                    const dataURL = canvas.toDataURL('image/png');
+
+                    try {
+                        await fetch('https://appandme.3xhaust.dev/picture/saveImage', {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify({ imageUrl: dataURL }),
+                        });
+                    } catch (error) {
+                        console.error('Error saving image:', error);
+                    }
+                };
             } catch (error) {
-                console.error('API 요청 중 오류 발생:', error);
+                console.error('Error saving image:', error);
             }
         }
 
-        $(document).ready(function () {
-            sendApiRequest();
-        });
+        async function setBackgroundImages() {
+            return new Promise((resolve, reject) => {
+                const lastNumberPromise = fetch('https://appandme.3xhaust.dev/picture/getLastImageNumber')
+                    .then(res => res.text());
+
+                lastNumberPromise.then(lastNumber => {
+                    const imageUrl = `https://appandme.3xhaust.dev?id=${lastNumber}`;
+                    const frame = document.getElementById('frame');
+                    frame.style.backgroundImage = `url('./assets/images/frame1.png'), url('${imageUrl}')`;
+
+                    // Use an image onload event to ensure the image is fully loaded
+                    const img = new Image();
+                    img.onload = () => {
+                        resolve(); // Resolve the promise when the image is loaded
+                    }
+                    img.onerror = reject; // Reject if there's an error
+                    img.src = imageUrl;
+                }).catch(error => {
+                    console.error('Error fetching background images:', error);
+                    reject(error);
+                });
+            });
+        }
+
+        async function sendApiRequest() {
+            try {
+                const lastNumber = await fetch('https://appandme.3xhaust.dev/picture/getLastImageNumber')
+                    .then(res => res.text());
+
+                $("#qrcode").qrcode({
+                    text: `https://appandme.3xhaust.dev?id=${parseInt(lastNumber) + 1}`,
+                    width: 70,
+                    height: 70,
+                    background: "#ffffff",
+                    foreground: "#000000"
+                });
+            } catch (error) {
+                console.error('Error fetching QR code:', error);
+            }
+        }
     </script>
-    <div class="background"></div>
-    <div class="frame"><img src="../pages/assets/images/frame1.jpg"></div>
 </body>
 
 </html>

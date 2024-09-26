@@ -35,7 +35,7 @@
       transition: all 0.5s ease;
       cursor: pointer;
       overflow: hidden;
-      background-size: cover;
+      background-size: contain;
       background-position: center;
       background-repeat: no-repeat;
     }
@@ -93,9 +93,7 @@
           'https://appandme.3xhaust.dev/picture/getLastImageNumber'
         ).then((res) => res.text());
 
-        
         const imageUrl = `https://appandme.3xhaust.dev?id=${lastNumber}`;
-        console.log(imageUrl);
         
         document.getElementById('first').style.backgroundImage = `url('../pages/assets/images/frame1.png'), url('${imageUrl}')`;
         document.getElementById('second').style.backgroundImage = `url('../pages/assets/images/frame2.png'), url('${imageUrl}')`;
