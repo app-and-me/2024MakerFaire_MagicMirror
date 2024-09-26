@@ -28,13 +28,13 @@ def apply_sticker(image, landmarks, sticker, sticker_type):
         y = forehead_y
     else:
         # 기본 스티커
-        sticker_width = int(face_width * 1.4)
+        sticker_width = int(face_width * 2)
         aspect_ratio = sticker.shape[1] / sticker.shape[0]
         sticker_height = int(sticker_width / aspect_ratio)
         resized_sticker = cv2.resize(sticker, (sticker_width, sticker_height))
 
         forehead_y = int(landmarks.part(21).y - sticker_height * 0.2) 
-        forehead_x = int(landmarks.part(27).x - sticker_width // 2)
+        forehead_x = int(landmarks.part(27).x - sticker_width * 0.45)
         x = forehead_x
         y = forehead_y
 
