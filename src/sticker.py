@@ -3,6 +3,7 @@ import dlib
 import os
 import sys
 import json
+import numpy as np
 
 # 얼굴 감지기와 랜드마크 예측기 초기화
 face_detector = dlib.get_frontal_face_detector()
@@ -22,7 +23,7 @@ def apply_sticker(image, landmarks, sticker):
     resized_sticker = cv2.resize(sticker, (sticker_width, sticker_height))
 
     # 스티커 위치 계산
-    forehead_y = int(landmarks.part(21).y - sticker_height * 0.45) 
+    forehead_y = int(landmarks.part(21).y - sticker_height * 0.45)
     forehead_x = int(landmarks.part(27).x - sticker_width // 2)
     x = forehead_x
     y = forehead_y
@@ -54,6 +55,45 @@ def apply_sticker(image, landmarks, sticker):
 
     return image
 
+def crop_and_combine_faces(image, faces):
+    padding = 100  # 픽셀 단위 여백
+    left_x = min([face.left() for face in faces]) - (padding - 0)
+    right_x = max([face.right() for face in faces]) + (padding - 0)
+    y1 = min([face.top() for face in faces]) - (padding * 3)
+    y2 = max([face.bottom() for face in faces]) + (padding * 8)
+
+    # 얼굴 영역의 중앙 x 좌표 계산
+    faces_center_x = (left_x + right_x) // 2
+    
+    # 이미지의 중앙 x 좌표 계산
+    image_center_x = image.shape[1] // 2
+
+    # 왼쪽/오른쪽 여백 계산 (사람들이 이미지 가운데 오도록)
+    left_padding = max(0, image_center_x - faces_center_x)  # 왼쪽 여백이 음수가 되지 않도록 수정
+    right_padding = left_padding 
+
+    x1 = left_x - left_padding
+    x2 = right_x + right_padding
+
+    # 이미지 범위를 벗어나지 않도록 조정
+    x1 = max(0, x1)
+    y1 = max(0, y1)
+    x2 = min(image.shape[1], x2)
+    y2 = min(image.shape[0], y2)
+
+    combined_image = image[y1:y2, x1:x2]
+
+    # 배경 부분 추출
+    background_left = image[0:image.shape[0], 0:max(0, left_x - padding // 2)]
+    background_right = image[0:image.shape[0], min(image.shape[1], right_x + padding // 2):image.shape[1]]
+
+    # 왼쪽/오른쪽 여백이 부족하면 배경 평균 색상으로 채우기
+    if left_padding > left_x:
+        combined_image = cv2.copyMakeBorder(combined_image, 0, 0, left_padding - left_x, 0, cv2.BORDER_CONSTANT, value=(255, 255, 255))  # 흰색으로 변경
+    if right_padding > image.shape[1] - right_x:
+        combined_image = cv2.copyMakeBorder(combined_image, 0, 0, 0, right_padding - (image.shape[1] - right_x), cv2.BORDER_CONSTANT, value=(255, 255, 255))  # 흰색으로 변경
+
+    return combined_image
 
 if __name__ == "__main__":
     try:
@@ -66,10 +106,8 @@ if __name__ == "__main__":
     sticker_folder = "src/assets/stickers/"
     stickers = []
     for sticker_name in sticker_names:
-        # 스티커 위치 지정
         sticker_path = os.path.join(sticker_folder, f"{sticker_name}.png")
         if os.path.exists(sticker_path):
-            # 스티커 지정
             sticker = cv2.imread(sticker_path, cv2.IMREAD_UNCHANGED)
             stickers.append(sticker)
         else:
@@ -79,8 +117,16 @@ if __name__ == "__main__":
         print("Error: No valid stickers found.", file=sys.stderr)
         sys.exit(1)
 
+    output_folder = "pages/assets/results/"
+    existing_files = [f for f in os.listdir(output_folder) if f.endswith(".png")]
+    if existing_files:
+        existing_numbers = [int(f.split('.')[0]) for f in existing_files if f.split('.')[0].isdigit()]
+        next_number = max(existing_numbers) if existing_numbers else 1
+    else:
+        next_number = 1
+
     # 이미지 로드
-    image = cv2.imread("src/assets/image.png")
+    image = cv2.imread(os.path.join(output_folder, f"{next_number}.png"))
 
     # 얼굴 감지
     faces = face_detector(image)
@@ -90,10 +136,7 @@ if __name__ == "__main__":
 
     # 각 얼굴에 스티커 적용
     for face, sticker_name in zip(sorted_faces, sticker_names):
-        # 얼굴 랜드마크 찾기
         landmarks = landmark_predictor(image, face)
-
-        # 스티커 적용
         sticker_path = os.path.join(sticker_folder, f"{sticker_name}.png")
         if os.path.exists(sticker_path):
             sticker = cv2.imread(sticker_path, cv2.IMREAD_UNCHANGED)
@@ -101,16 +144,8 @@ if __name__ == "__main__":
         else:
             print(f"Warning: Sticker not found: {sticker_path}", file=sys.stderr)
                 
-    # 결과 저장
-    output_folder = "pages/assets/results/"
-    existing_files = [f for f in os.listdir(output_folder) if f.endswith(".png")]
-    if existing_files:
-        existing_numbers = [int(f.split('.')[0]) for f in existing_files if f.split('.')[0].isdigit()]
-        next_number = max(existing_numbers) if existing_numbers else 1
-    else:
-        next_number = 1
+    combined_image = crop_and_combine_faces(image, sorted_faces)
 
-    print(next_number)
     # 결과 저장
     output_path = os.path.join(output_folder, f"{next_number}.png")
-    cv2.imwrite(output_path, image)
+    cv2.imwrite(output_path, combined_image)
