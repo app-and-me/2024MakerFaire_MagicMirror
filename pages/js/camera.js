@@ -27,15 +27,15 @@ function startCountdown() {
       countdown.textContent = countdownValue;
 
       if (countdownValue === 0) {
-        resolve();
         clearInterval(countdownTimer);
         countdown.style.display = 'none';
+        resolve();
       }
     }, 1000);
   });
 }
 
-async function capturePhoto() {
+function capturePhoto() {
   const canvas = document.createElement('canvas');
   const context = canvas.getContext('2d');
   canvas.width = video.videoWidth;
@@ -47,78 +47,13 @@ async function capturePhoto() {
 
   const dataURL = canvas.toDataURL('image/png');
 
-  try {
-    await fetch('http://localhost:5500/picture/saveImage', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ imageUrl: dataURL }),
-    });
-    await generateCharacterName();
-  } catch (error) {
-    console.error('이미지 저장 실패:', error);
-  }
+  localStorage.setItem('capturedImage', dataURL);
+
+  window.location.href = 'loadingPage.html';
 }
 
-async function fetchImage(url) {
-  const response = await fetch(url);
-  if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
-  return await response.blob();
-}
-
-async function generateCharacterName() {
-  try {
-    const lastNumber = await fetch(
-      'http://localhost:5500/picture/getLastImageNumber',
-    ).then((res) => res.text());
-    const imageUrl = `../../pages/assets/results/${lastNumber}.png`;
-    const blob = await fetchImage(imageUrl);
-
-    const formData = new FormData();
-    formData.append('image', blob, `${lastNumber}.png`);
-
-    const result = await fetch(
-      'http://localhost:5500/picture/generateCharacterName',
-      {
-        method: 'POST',
-        body: formData,
-      },
-    ).then((res) => res.text());
-
-    console.log('캐릭터 이름 생성 성공:', result);
-    applySticker(result);
-  } catch (error) {
-    console.error('캐릭터 이름 생성 실패:', error);
-  }
-}
-
-async function applySticker(name) {
-  try {
-    const lastNumber = await fetch(
-      'http://localhost:5500/picture/getLastImageNumber',
-    ).then((res) => res.text());
-    const imageUrl = `../../pages/assets/results/${lastNumber}.png`;
-    const blob = await fetchImage(imageUrl);
-
-    name = name.replace(/\s\r\n/g, '').trim();
-
-    const formData = new FormData();
-    formData.append('image', blob, `${lastNumber}.png`);
-    formData.append('stickerNames', name);
-    formData.append('hairData', 'hair');
-
-    await fetch('http://localhost:5500/picture/applySticker', {
-      method: 'POST',
-      body: formData,
-    });
-    goToNextPage();
-  } catch (error) {
-    console.log(error);
-    console.error('스티커 적용 실패:', error);
-  }
-}
-
-function goToNextPage() {
-  window.location.href = 'result.html';
-}
-
-initializeWebcam().then(capturePhoto).catch(console.error);
+initializeWebcam()
+  .then(() => {
+    capturePhoto();
+  })
+  .catch(console.error);

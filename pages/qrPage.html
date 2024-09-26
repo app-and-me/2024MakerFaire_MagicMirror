@@ -47,12 +47,11 @@
     <script>
         async function sendApiRequest() {
             try {
-                // lastNumber 값을 실제 숫자로 변환
                 const lastNumber = await fetch('https://appandme.3xhaust.dev/picture/getLastImageNumber')
                     .then((res) => res.text());
 
                 $("#qrcode").qrcode({
-                    text: 'https://appandme.3xhaust.dev?id=' + lastNumber, // imageUrl은 Blob에서 생성된 URL
+                    text: 'https://appandme.3xhaust.dev?id=' + lastNumber,
                     width: 100,
                     height: 100,
                     background: "#ffffff",
