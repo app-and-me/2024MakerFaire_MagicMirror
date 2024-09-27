@@ -59,7 +59,7 @@ def crop_and_combine_faces(image, faces):
     padding = 100  # 픽셀 단위 여백
     left_x = min([face.left() for face in faces]) - (padding - 0)
     right_x = max([face.right() for face in faces]) + (padding - 0)
-    y1 = min([face.top() for face in faces]) - (padding * 3)
+    y1 = min([face.top() for face in faces]) - (padding * 5)
     y2 = max([face.bottom() for face in faces]) + (padding * 8)
 
     # 얼굴 영역의 중앙 x 좌표 계산
