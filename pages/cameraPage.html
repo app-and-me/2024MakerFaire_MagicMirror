@@ -5,13 +5,14 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>마법의 거울 - 사진 찍기</title>
     <link rel="stylesheet" href="./css/style.css">
-    <script src="./js/camera.js" defer></script>
 </head>
 <body>
     <div id="camera-container">
-        <video id="camera" autoplay playsinline></video>
-        <div id="countdown"></div>
+        <div id="camera-frame">
+            <video id="camera" autoplay playsinline></video>
+            <div id="countdown"></div>
+        </div>
     </div>
-    <div id="snapshot-container"></div>
+    <script src="./js/camera.js"></script>
 </body>
 </html>
