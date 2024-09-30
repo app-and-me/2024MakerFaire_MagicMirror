@@ -1,10 +1,11 @@
 <!DOCTYPE html>
 <html lang="ko">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>framePage</title>
-  
+
   <style>
     body {
       display: flex;
@@ -14,20 +15,22 @@
       margin: 0;
       background-image: url('../pages/assets/images/background.png');
       background-size: cover;
-      background-position: center;      
+      background-position: center;
       font-family: Arial, sans-serif;
     }
+
     .carousel {
       position: relative;
       width: 600px;
-      height: 400px;    
+      height: 400px;
     }
+
     .card {
       position: absolute;
       width: 350px;
       height: 400px;
       border-radius: 10px;
-      box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
       display: flex;
       justify-content: center;
       align-items: center;
@@ -39,17 +42,20 @@
       background-position: center;
       background-repeat: no-repeat;
     }
+
     .card.left {
       left: 0;
       transform: translateX(-300px) scale(0.8);
-      
+
     }
+
     .card.center {
       left: 50%;
       transform: translateX(-50%) scale(1.1);
       z-index: 1;
-      
+
     }
+
     .card.right {
       right: 0;
       transform: translateX(300px) scale(0.8);
@@ -60,26 +66,68 @@
       background-size: cover, cover;
       background-position: center, center;
     }
+
     #second {
       background-image: url('../pages/assets/images/frame2.png');
       background-size: cover, cover;
       background-position: center, center;
     }
+
     #third {
       background-image: url('../pages/assets/images/frame3.png');
       background-size: cover, cover;
       background-position: center, center;
     }
+
+    .arrow { 
+    position: absolute; 
+    width: 10px;
+    height: 70px;
+    top: 550px;
+    left: 900px;
+    }
+
+    .arrow::after {
+      position: absolute;
+      left: 0;
+      top: 0;
+      content: '';
+      width: 30px;
+      height: 30px;
+      border-top: 5px solid white;
+      border-right: 5px solid white;
+      transform: rotate(45deg);
+    }
+
+    .timer {
+      position: absolute;
+      top: 20px;
+      right: 30px;
+      font-size: 80px;
+      font-weight: bold;
+      color: white;
+      padding: 10px 20px;
+      border-radius: 5px;
+    }
+
   </style>
 </head>
+
 <body>
   <div class="carousel">
     <div class="card left" id="first" onclick="moveCards('left')"></div>
     <div class="card center" id="second" onclick="moveCards('center')"></div>
     <div class="card right" id="third" onclick="moveCards('right')"></div>
+    <div class="arrow" id="clickArea" onclick="goToExplanationPage()"></div>
   </div>
 
+  <div class="timer" id="timer">60</div>
+
   <script>
+    function goToExplanationPage() {
+            window.location.href = 'qrPage.html';
+        }
+
     setBackgroundImages();
 
     async function fetchImage(url) {
@@ -89,15 +137,15 @@
     }
 
     async function setBackgroundImages() {
-        const lastNumber = await fetch(
-          'https://appandme.3xhaust.dev/picture/getLastImageNumber'
-        ).then((res) => res.text());
+      const lastNumber = await fetch(
+        'https://appandme.3xhaust.dev/picture/getLastImageNumber'
+      ).then((res) => res.text());
 
-        const imageUrl = `https://appandme.3xhaust.dev?id=${lastNumber}`;
-        
-        document.getElementById('first').style.backgroundImage = `url('../pages/assets/images/frame1.png'), url('${imageUrl}')`;
-        document.getElementById('second').style.backgroundImage = `url('../pages/assets/images/frame2.png'), url('${imageUrl}')`;
-        document.getElementById('third').style.backgroundImage = `url('../pages/assets/images/frame3.png'), url('${imageUrl}')`;
+      const imageUrl = `https://appandme.3xhaust.dev?id=${lastNumber}`;
+
+      document.getElementById('first').style.backgroundImage = `url('../pages/assets/images/frame1.png'), url('${imageUrl}')`;
+      document.getElementById('second').style.backgroundImage = `url('../pages/assets/images/frame2.png'), url('${imageUrl}')`;
+      document.getElementById('third').style.backgroundImage = `url('../pages/assets/images/frame3.png'), url('${imageUrl}')`;
     }
 
     function moveCards(direction) {
@@ -121,6 +169,19 @@
         }
       });
     }
+    let timeLeft = 60;
+    const timerElement = document.getElementById('timer');
+
+    const countdown = setInterval(() => {
+      timeLeft--;
+      timerElement.textContent = timeLeft;
+
+      if (timeLeft <= 0) {
+        clearInterval(countdown);
+        goToExplanationPage();
+      }
+    }, 1000);
   </script>
 </body>
+
 </html>
