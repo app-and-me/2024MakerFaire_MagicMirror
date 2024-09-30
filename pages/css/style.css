@@ -34,7 +34,7 @@ body, html {
   font-size: 6vw;
   color: #3F0096;
   cursor: pointer;
-  bottom: 19%;
+  bottom: 20%;
   right: 23%;
   opacity: 1;
 }
@@ -65,13 +65,12 @@ body, html {
 }
 
 #camera {
-  width: 89.4%;
-  height: 92%;
   object-fit: cover;
   position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50.65%, -50.3%);
+  left: 2%;
+  top: 3%;
+  width: 95%;
+  height: 95%;
 }
 
 #countdown {
