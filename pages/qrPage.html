@@ -41,6 +41,40 @@
             justify-content: center;
             align-items: center;
         }
+
+        .arrow {
+            position: absolute;
+            bottom: 25px;
+            right: 155px;
+        }
+
+        .arrow>img {
+            width: 85%;
+        }
+
+        .Des_Text>img {
+            position: absolute;
+            width: 20%;
+            right: 8%;
+            bottom: 17%;
+        }
+
+        .toMain {
+            position: absolute;
+            bottom: 50px;
+            right: 40px;
+        }
+
+        .timer {
+            position: absolute;
+            top: 20px;
+            right: 30px;
+            font-size: 80px;
+            font-weight: bold;
+            color: white;
+            padding: 10px 20px;
+            border-radius: 5px;
+        }
     </style>
     <script src="https://html2canvas.hertzen.com/dist/html2canvas.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
@@ -48,10 +82,15 @@
 </head>
 
 <body>
+    <div class="Des_Text"><img src="../pages/assets/images/description_text.png"></div>
     <div class="result">
         <div id="qrcode"></div>
         <div class="frame" id="frame"></div>
     </div>
+
+    <div class="arrow"><img src="../pages/assets/images/qr_arrow.png"></div>
+    <div class="toMain"><img src="../pages/assets/images/toMain.png"></div>
+    <div class="timer" id="timer">60</div>
 
     <script>
         $(document).ready(function () {
@@ -147,6 +186,18 @@
                 console.error('Error fetching QR code:', error);
             }
         }
+        let timeLeft = 60;
+        const timerElement = document.getElementById('timer');
+
+        const countdown = setInterval(() => {
+            timeLeft--;
+            timerElement.textContent = timeLeft;
+
+            if (timeLeft <= 0) {
+                clearInterval(countdown);
+                goToExplanationPage();
+            }
+        }, 1000);
     </script>
 </body>
 

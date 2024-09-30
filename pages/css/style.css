@@ -65,13 +65,12 @@ body, html {
 }
 
 #camera {
-  width: 89.4%;
-  height: 92%;
+  width: 95%;
+  height: 95%;
   object-fit: cover;
   position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50.65%, -50.3%);
+  top: 3%;
+  left: 2%;
 }
 
 #countdown {
