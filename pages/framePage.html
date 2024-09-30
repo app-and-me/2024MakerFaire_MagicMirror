@@ -125,8 +125,10 @@
 
   <script>
     function goToExplanationPage() {
-            window.location.href = 'qrPage.html';
-        }
+      let id = document.querySelector('.card.center').id == "first" ? 1 : document.querySelector('.card.center').id == "second" ? 2 : 3; 
+      localStorage.setItem("frame", id);
+      window.location.href = 'qrPage.html';
+    }
 
     setBackgroundImages();
 
