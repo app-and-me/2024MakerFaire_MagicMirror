@@ -9,7 +9,7 @@ async function initializeWebcam() {
     video.srcObject = stream;
     await video.play();
     video.style.transform = 'scaleX(-1)';
-    //await startCountdown();
+    await startCountdown();
   } catch (err) {
     console.error('웹캠 접근 실패:', err);
     alert('웹캠에 접근할 수 없습니다. 브라우저 권한을 확인하세요.');
@@ -54,6 +54,6 @@ function capturePhoto() {
 
 initializeWebcam()
   .then(() => {
-    //capturePhoto();
+    capturePhoto();
   })
   .catch(console.error);
