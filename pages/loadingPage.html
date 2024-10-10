@@ -58,8 +58,8 @@
                     method: 'POST',
                     body: formData,
                 }).then(res => res.text());
-
-                console.log(characterName);
+                
+                localStorage.setItem('characterName', characterName);
 
                 const stickerFormData = new FormData();
                 stickerFormData.append('image', blob, `${lastNumber}.png`);

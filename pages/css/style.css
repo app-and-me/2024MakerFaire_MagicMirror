@@ -66,19 +66,12 @@ html {
 }
 
 #camera {
-  <<<<<<< HEAD width: 95%;
+  width: 95%;
   height: 95%;
   object-fit: cover;
   position: absolute;
   top: 3%;
   left: 2%;
-  =======object-fit: cover;
-  position: absolute;
-  left: 2%;
-  top: 3%;
-  width: 95%;
-  height: 95%;
-  >>>>>>>949e216c53a2775dde49c4dfc63df744e28adeed
 }
 
 #countdown {
@@ -131,7 +124,7 @@ html {
   z-index: 10px;
 }
 
-/* Result page */
+/* result page */
 .background {
   display: flex;
   justify-content: center;
@@ -154,34 +147,23 @@ html {
   transform: translate(-50%, -10%);
 }
 
-.box {
+.result {
   position: absolute;
   top: 60%;
   left: 50%;
   transform: translate(-50%, -60%);
-  width: 70%;
-  height: 60%;
-  max-width: 1200px;
-  aspect-ratio: 16 / 9;
+  width: 50%;
+  height: 50%;
   background-color: #c6c6c6;
 }
 
-.role {
+.characters {
   position: absolute;
-  z-index: 15;
-  bottom: 5%;
-  left: 28.5%;
-  transform: translate(-50%, -50%);
-  font-size: 2rem;
-  color: black;
-}
-
-.role2 {
-  position: absolute;
-  z-index: 15;
-  bottom: 5%;
-  left: 72.5%;
-  transform: translate(-50%, -50%);
-  font-size: 2rem;
-  color: black;
+  bottom: 10%; 
+  left: 50%;
+  transform: translateX(-50%); 
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%; 
 }
